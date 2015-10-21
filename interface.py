@@ -28,3 +28,11 @@ class File:
 
     def set_path(self, path):
         self.path = path
+
+class Data:
+    def __init__(self, group_no, files = []):
+        self.group_no = group_no
+        self.files = files
+
+    def add_file(self, file):
+        self.files.append(file)
