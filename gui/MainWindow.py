@@ -40,5 +40,5 @@ class MainWindow(QMainWindow):
             self.ui.listWidgetFiles.setCurrentItem(self.ui.listWidgetFiles.item(0))
 
     def fileListSelectedItemChanged(self, curr, prev):
-        print(curr.text())
-        pass
+        f = open(curr.text(), 'r')
+        self.ui.plainTextEditCode.setPlainText(f.read())
