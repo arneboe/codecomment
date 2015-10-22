@@ -25,39 +25,19 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QPlainTextEdit" name="plainTextEdit_2"/>
+       <widget class="QPlainTextEdit" name="plainTextEditComment"/>
       </item>
       <item row="1" column="0">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <layout class="QFormLayout" name="formLayout">
-          <property name="fieldGrowthPolicy">
-           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         <widget class="QListWidget" name="listWidgetComments">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Group No.</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="lineEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>40</width>
-              <height>16777215</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         </widget>
         </item>
        </layout>
       </item>
@@ -75,32 +55,51 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>804</width>
-     <height>27</height>
-    </rect>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
    </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionOpen"/>
-    <addaction name="actionExport"/>
-   </widget>
-   <addaction name="menuFile"/>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionOpen"/>
+   <addaction name="actionExport"/>
+   <addaction name="actionAdd_Comment"/>
+   <addaction name="actionAdd_Selection"/>
   </widget>
   <action name="actionExport">
    <property name="text">
-    <string>Export</string>
+    <string>&amp;Export</string>
+   </property>
+   <property name="shortcut">
+    <string>E</string>
    </property>
   </action>
   <action name="actionOpen">
    <property name="text">
-    <string>Open</string>
+    <string>&amp;Open</string>
+   </property>
+   <property name="shortcut">
+    <string>O</string>
+   </property>
+  </action>
+  <action name="actionAdd_Comment">
+   <property name="text">
+    <string>Add Comment</string>
+   </property>
+   <property name="shortcut">
+    <string>C</string>
+   </property>
+  </action>
+  <action name="actionAdd_Selection">
+   <property name="text">
+    <string>Add Selection</string>
+   </property>
+   <property name="shortcut">
+    <string>S</string>
    </property>
   </action>
  </widget>

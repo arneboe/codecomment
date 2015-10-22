@@ -18,6 +18,9 @@ class Comment:
     def set_text(self, text):
         self.text = text
 
+    def get_text(self):
+        return self.text
+
 class File:
     def __init__(self, path="", comments=[]):
         self.path = path
@@ -29,6 +32,9 @@ class File:
     def set_path(self, path):
         self.path = path
 
+    def get_comment(self, i):
+        return self.comments[i]
+
 class Data:
     def __init__(self, group_no, files = []):
         self.group_no = group_no
@@ -36,3 +42,9 @@ class Data:
 
     def add_file(self, file):
         self.files.append(file)
+
+    def get_file_by_path(self, path):
+        for f in self.files:
+            if f.path == path:
+                return f
+        raise ValueError(path + "does not exist")
