@@ -1,6 +1,6 @@
 __author__ = 'aboeckmann'
 
-from PyQt4.QtGui import QMainWindow, QFileDialog, QFont, QListWidgetItem, QTextCharFormat, QBrush, QColor, QTextCursor
+from PyQt4.QtGui import QMainWindow, QFileDialog, QFont, QListWidgetItem, QTextCharFormat, QBrush, QColor, QTextCursor, QListWidget
 from PyQt4 import uic
 from Highlighter import Highlighter
 from interface import *
@@ -54,6 +54,16 @@ class MainWindow(QMainWindow):
         f = open(curr.text(), 'r')
         self.ui.plainTextEditCode.setPlainText(f.read())
 
+        # update comment list if file changed
+        f = self.data.get_file_by_path(curr.text())
+        self.ui.listWidgetComments.clear()
+        for comment in f.comments:
+            text = comment.get_text()[:40]
+            item = QListWidgetItem(text)
+            self.ui.listWidgetComments.addItem(item)
+            self.ui.listWidgetComments.setCurrentItem(item)
+
+
     def get_current_file_path(self):
         return self.ui.listWidgetFiles.currentItem().text()
 
@@ -68,7 +78,7 @@ class MainWindow(QMainWindow):
         initial_comment_text = "comment #" + str(self.next_comment_no)
         self.next_comment_no += 1
         file = self.data.get_file_by_path(self.get_current_file_path())
-        file.add_comment(Comment(initial_comment_text))
+        file.add_comment(Comment(initial_comment_text, []))
         item = QListWidgetItem(initial_comment_text)
         self.ui.listWidgetComments.addItem(item)
         self.ui.listWidgetComments.setCurrentItem(item)
@@ -78,16 +88,21 @@ class MainWindow(QMainWindow):
 
     def selectedCommentChanged(self, curr, prev):
         #called whenever another comment is selected
-        current_file = self.data.get_file_by_path(self.get_current_file_path())
-        self.current_comment = current_file.get_comment(self.get_current_comment_index())
-        comment_text = self.current_comment.get_text()
         self.ui.plainTextEditComment.blockSignals(True) #otherwise it would cause a textChanged() event which would overwrite the data
-        self.ui.plainTextEditComment.setPlainText(comment_text)
+        if not curr is None:
+            current_file = self.data.get_file_by_path(self.get_current_file_path())
+            self.current_comment = current_file.get_comment(self.get_current_comment_index())
+            comment_text = self.current_comment.get_text()
+            self.ui.plainTextEditComment.setPlainText(comment_text)
+        else:
+            self.ui.plainTextEditComment.clear()
+            self.current_comment = None
         self.ui.plainTextEditComment.blockSignals(False)
 
     def commentTextChanged(self):
         new_text = self.ui.plainTextEditComment.document().toPlainText()
         self.current_comment.set_text(new_text)
+        self.ui.listWidgetComments.currentItem().setText(new_text[0:40])
 
     def addSelection(self):
         #is called whenever the user wants to add a new selection
@@ -113,5 +128,4 @@ class MainWindow(QMainWindow):
             end_line = cursor.blockNumber()
             end_column = cursor.columnNumber()
 
-            print(start_line, end_line, start_column, end_column)
-            #self.current_comment.add_marker(Marker(cursor.))
+            self.current_comment.add_marker(Marker(start_line, end_line, start_column, end_column))
