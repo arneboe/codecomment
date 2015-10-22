@@ -40,8 +40,8 @@ class Data:
         self.group_no = group_no
         self.files = files
 
-    def add_file(self, file):
-        self.files.append(file)
+    def add_file(self, path):
+        self.files.append(path)
 
     def get_file_by_path(self, path):
         for f in self.files:
