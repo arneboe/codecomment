@@ -1,6 +1,5 @@
 __author__ = 'aboeckmann'
 
-
 class Marker:
     def __init__(self, line, start_col, end_col):
         self.line = line
