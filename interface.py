@@ -8,9 +8,12 @@ class Marker:
         self.end_col = end_col
 
 class Comment:
-    def __init__(self, text="", markers=[]):
+    def __init__(self, text="", markers=None):
         self.text = text
-        self.markers = markers
+        if markers is None:
+            self.markers = []
+        else:
+            self.markers = markers
 
     def add_marker(self, marker):
         self.markers.append(marker)
@@ -22,9 +25,12 @@ class Comment:
         return self.text
 
 class File:
-    def __init__(self, path="", comments=[]):
+    def __init__(self, path="", comments=None):
         self.path = path
-        self.comments = comments
+        if(comments is None):
+            self.comments = []
+        else:
+            self.comments = comments
 
     def add_comment(self, comment):
         self.comments.append(comment)
@@ -36,9 +42,12 @@ class File:
         return self.comments[i]
 
 class Data:
-    def __init__(self, group_no, files = []):
+    def __init__(self, group_no, files = None):
         self.group_no = group_no
-        self.files = files
+        if(files is None):
+            self.files = []
+        else:
+            self.files = files
 
     def add_file(self, path):
         self.files.append(path)
