@@ -90,16 +90,22 @@
    <property name="text">
     <string>Add Comment</string>
    </property>
+   <property name="toolTip">
+    <string>alt + c</string>
+   </property>
    <property name="shortcut">
-    <string>C</string>
+    <string>Alt+C</string>
    </property>
   </action>
   <action name="actionAdd_Selection">
    <property name="text">
     <string>Add Selection</string>
    </property>
+   <property name="toolTip">
+    <string>alt + s</string>
+   </property>
    <property name="shortcut">
-    <string>S</string>
+    <string>Alt+S</string>
    </property>
   </action>
  </widget>
