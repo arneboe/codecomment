@@ -28,12 +28,14 @@ class MainWindow(QMainWindow):
         self.ui.actionOpen.triggered.connect(self.open)
         self.ui.actionAdd_Selection.setEnabled(False)#is disbled initially because no comment is selected on startup
         self.ui.actionAdd_Comment.setEnabled(False)#will be enabeled as soon as  a file is added
-        self.ui.actionAdd_Comment.triggered.connect(self.addComment)
-        self.ui.actionAdd_Selection.triggered.connect(self.addSelection)
+        self.ui.actionAdd_Comment.triggered.connect(self.add_comment)
+        self.ui.actionAdd_Selection.triggered.connect(self.add_selection)
+        self.ui.actionRemove_Comment.setEnabled(False)
+        self.ui.actionRemove_Comment.triggered.connect(self.remove_comment)
 
-        self.ui.listWidgetFiles.currentItemChanged.connect(self.fileListSelectedItemChanged)
-        self.ui.listWidgetComments.currentItemChanged.connect(self.selectedCommentChanged)
-        self.ui.plainTextEditComment.textChanged.connect(self.commentTextChanged)
+        self.ui.listWidgetFiles.currentItemChanged.connect(self.selected_file_changed)
+        self.ui.listWidgetComments.currentItemChanged.connect(self.selected_comment_changed)
+        self.ui.plainTextEditComment.textChanged.connect(self.comment_text_changed)
         self.ui.plainTextEditComment.setReadOnly(True)
         self.next_comment_no = 0
         self.data = Data(0)
@@ -85,7 +87,7 @@ class MainWindow(QMainWindow):
         while self.ui.listWidgetComments.count() > 0:
             self.ui.listWidgetComments.takeItem(0)
 
-    def fileListSelectedItemChanged(self, curr, prev):
+    def selected_file_changed(self, curr, prev):
         #is called whenever an item is selecetd in the file list
         f = open(curr.text(), 'r')
 
@@ -99,6 +101,11 @@ class MainWindow(QMainWindow):
             self.ui.listWidgetComments.addItem(item)
             self.ui.listWidgetComments.setCurrentItem(item)
             self.highlight_all_markers(comment)
+
+        if len(f.comments) > 0:
+            self.ui.actionRemove_Comment.setEnabled(True)
+        else:
+            self.ui.actionRemove_Comment.setEnabled(False)
 
 
     def highlight_all_markers(self, comment):
@@ -117,7 +124,7 @@ class MainWindow(QMainWindow):
         comment = self.comments[item]
         return self.commentMetaData[comment].color_name
 
-    def addComment(self):
+    def add_comment(self):
         #is called whenever the user clicks "add comment"
         color_name = self.color_names[self.next_comment_no % len(self.color_names)]
         initial_comment_text = "comment #" + str(self.next_comment_no)
@@ -140,11 +147,13 @@ class MainWindow(QMainWindow):
         icon = QIcon(pixmap)
         item.setIcon(icon)
 
+        self.ui.actionRemove_Comment.setEnabled(True)
+
 
         #as soon as we have one comment, we can enable the "add selection" button
         self.ui.actionAdd_Selection.setEnabled(True)
 
-    def selectedCommentChanged(self, curr, prev):
+    def selected_comment_changed(self, curr, prev):
         #called whenever another comment is selected
         self.ui.plainTextEditComment.blockSignals(True) #otherwise it would cause a textChanged() event which would overwrite the data
         if not curr is None:
@@ -152,6 +161,7 @@ class MainWindow(QMainWindow):
             comment_text = self.current_comment.get_text()
             self.ui.plainTextEditComment.setPlainText(comment_text)
             self.ui.plainTextEditComment.setReadOnly(False)
+            self.ui.actionAdd_Selection.setEnabled(True)
             #jump to first marker
             if len(self.current_comment.markers) > 0:
                 first_marker = self.current_comment.markers[0]
@@ -162,10 +172,11 @@ class MainWindow(QMainWindow):
         else:
             self.ui.plainTextEditComment.clear()
             self.ui.plainTextEditComment.setReadOnly(True)
+            self.ui.actionAdd_Selection.setEnabled(False)
             self.current_comment = None
         self.ui.plainTextEditComment.blockSignals(False)
 
-    def commentTextChanged(self):
+    def comment_text_changed(self):
         new_text = self.ui.plainTextEditComment.document().toPlainText()
         self.current_comment.set_text(new_text)
         self.ui.listWidgetComments.currentItem().setText(new_text[0:40])
@@ -185,7 +196,7 @@ class MainWindow(QMainWindow):
 
 
 
-    def addSelection(self):
+    def add_selection(self):
         #is called whenever the user wants to add a new selection
         cursor = self.ui.plainTextEditCode.textCursor()
         if cursor.hasSelection():
@@ -210,4 +221,6 @@ class MainWindow(QMainWindow):
             self.ui.plainTextEditCode.setTextCursor(cursor)
 
 
-
+    def remove_comment(self):
+        #called when the user wants to remove a comment
+        pass
