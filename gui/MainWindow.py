@@ -1,6 +1,6 @@
 __author__ = 'aboeckmann'
 
-from PyQt4.QtGui import QMainWindow, QFileDialog, QFont, QListWidgetItem, QTextCharFormat, QBrush, QColor, QTextCursor, QListWidget
+from PyQt4.QtGui import QMainWindow, QFileDialog, QFont, QListWidgetItem, QTextCharFormat, QBrush, QColor, QTextCursor, QListWidget, QTextOption
 from PyQt4 import uic
 from Highlighter import Highlighter
 from interface import *
@@ -36,6 +36,11 @@ class MainWindow(QMainWindow):
 
         self.color_names = ["coral", "cornflowerblue", "darksalmon", "darkseagreen",
                             "greenyellow", "plum", "rosybrown", "mistyrose"]
+
+        #important because otherwise the mapping from block to line breaks
+        self.ui.plainTextEditCode.setWordWrapMode(QTextOption.NoWrap)
+        #make sure that the cursor is always in the center (improves readability when clickig on comments)
+        self.ui.plainTextEditCode.setCenterOnScroll(True)
 
         self.ui.show();
 
@@ -94,6 +99,14 @@ class MainWindow(QMainWindow):
             self.current_comment = current_file.get_comment(self.get_current_comment_index())
             comment_text = self.current_comment.get_text()
             self.ui.plainTextEditComment.setPlainText(comment_text)
+
+            #jump to first marker
+            if len(self.current_comment.markers) > 0:
+                first_marker = self.current_comment.markers[0]
+                line = first_marker.start_line
+                cursor = QTextCursor(self.ui.plainTextEditCode.document().findBlockByNumber(line)) #only works without word wrap
+                self.ui.plainTextEditCode.setTextCursor(cursor)
+                #FIXME hier weitermachen!!! das ^^^^ funktioniert nicht
         else:
             self.ui.plainTextEditComment.clear()
             self.current_comment = None
