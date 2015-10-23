@@ -3,7 +3,7 @@ __author__ = 'aboeckmann'
 from PyQt4.QtGui import QMainWindow, QFileDialog, QFont,\
                         QListWidgetItem, QTextCharFormat, QBrush, QColor, QTextCursor,\
                         QListWidget, QTextOption, QPixmap, QIcon, QPlainTextEdit, QLineEdit,\
-                        QLabel
+                        QLabel, QPalette
 from PyQt4 import uic
 from Highlighter import Highlighter
 from interface import *
@@ -51,6 +51,8 @@ class MainWindow(QMainWindow):
 
         self.color_names = ["coral", "cornflowerblue", "darksalmon", "darkseagreen",
                             "greenyellow", "plum", "rosybrown", "mistyrose"]
+
+        self.default_color = self.ui.plainTextEditCode.palette().color(QPalette.Base)
 
         self.ui.show();
 
@@ -190,15 +192,18 @@ class MainWindow(QMainWindow):
         self.ui.listWidgetComments.currentItem().setText(new_text[0:40])
 
 
-    def highlight_marker(self, marker_meta_data):
+    def highlight_marker(self, marker_meta_data, color=None):
         '''
         highlights text according to the marker and the color in the current file
+        use metadata.color_name of color is Nnoe
         '''
         cursor = self.ui.plainTextEditCode.textCursor()
         cursor.setPosition(marker_meta_data.start_pos)
         cursor.setPosition(marker_meta_data.end_pos, QTextCursor.KeepAnchor)
         format = QTextCharFormat()
-        brush = QBrush(QColor(marker_meta_data.color_name))
+        if color is None:
+            color = QColor(marker_meta_data.color_name)
+        brush = QBrush(color)
         format.setBackground(brush)
         cursor.mergeCharFormat(format)
 
@@ -230,8 +235,24 @@ class MainWindow(QMainWindow):
 
 
     def remove_comment(self):
-        #called when the user wants to remove a comment
-        pass
+        if not self.current_comment is None:
+            item = self.commentMetaData[self.current_comment].item
+            del self.commentMetaData[self.current_comment]
+
+            #remove from data
+            file = self.data.get_file_by_path(self.get_current_file_path())
+            file.comments.remove(self.current_comment)
+            #remove markings from text
+            for marker in self.current_comment.markers:
+                meta_data = self.markerMetaData[marker]
+                self.highlight_marker(meta_data, self.default_color)
+                del self.markerMetaData[marker]
+
+            #remove from gui
+            self.ui.listWidgetComments.takeItem(self.ui.listWidgetComments.row(item)) #memory leak but I dont care
+
+
+
 
     def group_no_changed(self, new_value):
         self.data.set_group_no(new_value)
