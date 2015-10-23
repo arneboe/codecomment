@@ -6,7 +6,7 @@ from interface import *
 
 
 
-group_no = 1
+group_no = "G1"
 d = Data(group_no)
 
 file_1 = File("./test_code/ConfigurationHelper.hpp")

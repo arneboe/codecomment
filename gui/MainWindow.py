@@ -2,7 +2,8 @@ __author__ = 'aboeckmann'
 
 from PyQt4.QtGui import QMainWindow, QFileDialog, QFont,\
                         QListWidgetItem, QTextCharFormat, QBrush, QColor, QTextCursor,\
-                        QListWidget, QTextOption, QPixmap, QIcon, QPlainTextEdit
+                        QListWidget, QTextOption, QPixmap, QIcon, QPlainTextEdit, QLineEdit,\
+                        QLabel
 from PyQt4 import uic
 from Highlighter import Highlighter
 from interface import *
@@ -24,6 +25,13 @@ class MainWindow(QMainWindow):
         self.markerMetaData = {}
 
         self.reset_code_edit()
+        self.labelGroup = QLabel("Group No.")
+        self.ui.toolBar.addWidget(self.labelGroup)
+        self.lineEditGroup = QLineEdit()
+        self.lineEditGroup.setFixedWidth(150)
+        self.lineEditGroup.textChanged.connect(self.group_no_changed)
+        self.ui.toolBar.addWidget(self.lineEditGroup)
+
 
         self.ui.actionOpen.triggered.connect(self.open)
         self.ui.actionAdd_Selection.setEnabled(False)#is disbled initially because no comment is selected on startup
@@ -224,3 +232,6 @@ class MainWindow(QMainWindow):
     def remove_comment(self):
         #called when the user wants to remove a comment
         pass
+
+    def group_no_changed(self, new_value):
+        self.data.set_group_no(new_value)
