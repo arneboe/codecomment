@@ -183,6 +183,7 @@ class MainWindow(QMainWindow):
             self.ui.plainTextEditComment.clear()
             self.ui.plainTextEditComment.setReadOnly(True)
             self.ui.actionAdd_Selection.setEnabled(False)
+            self.ui.actionRemove_Comment.setEnabled(False)
             self.current_comment = None
         self.ui.plainTextEditComment.blockSignals(False)
 
