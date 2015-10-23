@@ -1,12 +1,13 @@
 __author__ = 'aboeckmann'
 
 from interface import *
+import Exporter
 
 #just for testing
 
 
 
-group_no = 1
+group_no = "D02"
 d = Data(group_no)
 
 file_1 = File("./test_code/ConfigurationHelper.hpp")
@@ -40,7 +41,8 @@ f2_comment_2.add_marker(f2_c2_marker_1)
 
 print("bla")
 
-
+ex = Exporter.Export();
+ex.export(d, "./texout/testfile.tex")
 
 '''
 class Marker:
