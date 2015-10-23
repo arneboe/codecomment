@@ -52,6 +52,9 @@ class Data:
     def add_file(self, path):
         self.files.append(path)
 
+    def set_group_no(self, value):
+        self.group_no = value
+
     def get_file_by_path(self, path):
         for f in self.files:
             if f.path == path:
