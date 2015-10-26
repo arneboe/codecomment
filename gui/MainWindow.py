@@ -220,7 +220,7 @@ class MainWindow(QMainWindow):
 
     def comment_text_changed(self):
         new_text = self.ui.plainTextEditComment.document().toPlainText()
-        unicoded = str(new_text.toUtf8()).decode("utf-8")
+        unicoded = unicode(new_text.toUtf8(), encoding="UTF-8")
         self.current_comment.set_text(unicoded)
         self.ui.listWidgetComments.currentItem().setText(new_text[0:40])
 
