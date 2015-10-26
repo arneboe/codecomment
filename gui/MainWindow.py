@@ -8,11 +8,19 @@ from PyQt4 import uic
 from Highlighter import Highlighter
 from interface import *
 from MetaData import CommentMetaData, MarkerMetaData
+from yaml import load, dump
+from os.path import dirname
+from Exporter import Export
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
 
+
+        self.data = Data(0)
+        self.save_folder = "."
+        self.load_yaml()
 
         # Set up the user interface from qt designer file
         self.ui = uic.loadUi('gui/ui_MainWindow.ui')
@@ -25,12 +33,29 @@ class MainWindow(QMainWindow):
         self.markerMetaData = {}
 
         self.reset_code_edit()
+
         self.labelGroup = QLabel("Group No.")
         self.ui.toolBar.addWidget(self.labelGroup)
         self.lineEditGroup = QLineEdit()
-        self.lineEditGroup.setFixedWidth(150)
+        self.lineEditGroup.setFixedWidth(60)
+        self.lineEditGroup.setText(self.data.group_no)
         self.lineEditGroup.textChanged.connect(self.group_no_changed)
         self.ui.toolBar.addWidget(self.lineEditGroup)
+
+        self.labelSheet = QLabel("Sheet No.")
+        self.ui.toolBar.addWidget(self.labelSheet)
+        self.lineEditSheet = QLineEdit()
+        self.lineEditSheet.setFixedWidth(60)
+        self.lineEditSheet.setText(self.data.sheet_no)
+        self.lineEditSheet.textChanged.connect(self.sheet_no_changed)
+        self.ui.toolBar.addWidget(self.lineEditSheet)
+
+        self.labelTutor = QLabel("Tutor")
+        self.ui.toolBar.addWidget(self.labelTutor)
+        self.lineEditTutor = QLineEdit()
+        self.lineEditTutor.setText(self.data.tutor_name)
+        self.lineEditTutor.textChanged.connect(self.tutor_name_changed)
+        self.ui.toolBar.addWidget(self.lineEditTutor)
 
 
         self.ui.actionOpen.triggered.connect(self.open)
@@ -40,13 +65,17 @@ class MainWindow(QMainWindow):
         self.ui.actionAdd_Selection.triggered.connect(self.add_selection)
         self.ui.actionRemove_Comment.setEnabled(False)
         self.ui.actionRemove_Comment.triggered.connect(self.remove_comment)
+        self.ui.actionExport.triggered.connect(self.export)
+
 
         self.ui.listWidgetFiles.currentItemChanged.connect(self.selected_file_changed)
         self.ui.listWidgetComments.currentItemChanged.connect(self.selected_comment_changed)
         self.ui.plainTextEditComment.textChanged.connect(self.comment_text_changed)
         self.ui.plainTextEditComment.setReadOnly(True)
         self.next_comment_no = 0
-        self.data = Data(0)
+
+
+
         self.current_comment = None #the currently selected comment, if any
 
         self.color_names = ["coral", "cornflowerblue", "darksalmon", "darkseagreen",
@@ -84,7 +113,7 @@ class MainWindow(QMainWindow):
         for f in files:
             item = QListWidgetItem(f)
             self.ui.listWidgetFiles.addItem(item)
-            self.data.add_file(File(f))
+            self.data.add_file(File(str(f)))
         if(len(files) > 0):
             self.ui.listWidgetFiles.setCurrentItem(self.ui.listWidgetFiles.item(0))
             self.ui.actionAdd_Comment.setEnabled(True)
@@ -253,7 +282,49 @@ class MainWindow(QMainWindow):
             self.ui.listWidgetComments.takeItem(self.ui.listWidgetComments.row(item)) #memory leak but I dont care
 
 
-
-
     def group_no_changed(self, new_value):
-        self.data.set_group_no(new_value)
+        self.data.group_no = unicode(new_value.toUtf8(), encoding="UTF-8")
+        self.save_yaml()
+
+    def sheet_no_changed(self, new_value):
+        self.data.sheet_no = unicode(new_value.toUtf8(), encoding="UTF-8")
+        self.save_yaml()
+
+    def tutor_name_changed(self, new_value):
+        self.data.tutor_name = unicode(new_value.toUtf8(), encoding="UTF-8")
+        self.save_yaml()
+
+    def load_yaml(self):
+        with open("settings.yaml", "r") as f:
+            doc = load(f)
+            self.data.group_no = doc["group"]
+            self.data.sheet_no = doc["sheet"]
+            self.data.tutor_name = doc["tutor"]
+            self.save_folder = doc["folder"]
+
+    def save_yaml(self):
+        data = {"group" : self.data.group_no,
+                "sheet" : self.data.sheet_no,
+                "tutor" : self.data.tutor_name,
+                "folder" : self.save_folder}
+
+        with open('settings.yaml', 'w') as f:
+            f.write(dump(data, default_flow_style=False))
+
+    def set_save_path(self, path):
+        self.save_folder = path
+        self.save_yaml()
+
+    def export(self):
+        #is called whenever the user clicks on export
+
+        output_name = "Code_Anmerkungen_" + str(self.data.group_no) + "_" + str(self.data.sheet_no) + ".tex"
+        path = "."
+        file_name = path + "/" + output_name
+
+        save_name = QFileDialog.getSaveFileName(self, "Export to Tex", file_name, "Tex files (*.tex)");
+
+        if save_name.length() > 0: #i.e. the user didnt cancel the dialog
+            self.set_save_path(dirname(str(save_name)))
+            ex = Export()
+            ex.export(self.data, str(save_name))

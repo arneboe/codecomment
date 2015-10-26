@@ -33,7 +33,7 @@ f1_comment_1.add_marker(f1_c1_marker_2)
 f1_c2_marker_1 = Marker(21, 21, 3, 20)
 f1_comment_2.add_marker(f1_c2_marker_1)
 
-f2_c1_marker_1 = Marker(57, 57, 10, 20)
+f2_c1_marker_1 = Marker(58, 58, 10, 30)
 f2_comment_1.add_marker(f2_c1_marker_1)
 
 f2_c2_marker_1 = Marker(268, 268, 0, 10)
@@ -42,7 +42,7 @@ f2_comment_2.add_marker(f2_c2_marker_1)
 print("bla")
 
 ex = Exporter.Export();
-ex.export(d, "./texout/testfile.tex")
+ex.export(d, "./testfile.tex")
 
 '''
 class Marker:

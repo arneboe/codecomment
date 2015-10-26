@@ -56,7 +56,7 @@ struct ItemEventSubscriber : public GraphItemEventDispatcher<Item<string>::Ptr>,
     vector<TypedItemAddedEvent<Item<string>::Ptr>> stringItemAddedEvents;
     vector<TypedItemAddedEvent<Item<int>::Ptr>> intItemAddedEvents;
     vector<TypedItemAddedEvent<Item<float>::Ptr>> floatItemAddedEvents; 
-    vector<TypedItemRemovedEvent<Item<string>::Ptr>> stringItemRemovedEvents;
+    vector<TypedItemRemovedEvent<Item<string>::Ptr>> stringItemRemovedEvents; // bladlsadl wqldw qldwqld wqldwql dl wqdlwql wd
     vector<TypedItemRemovedEvent<Item<int>::Ptr>> intItemRemovedEvents;
     vector<TypedItemRemovedEvent<Item<float>::Ptr>> floatItemRemovedEvents; 
 

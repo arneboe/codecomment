@@ -42,8 +42,10 @@ class File:
         return self.comments[i]
 
 class Data:
-    def __init__(self, group_no, files = None):
+    def __init__(self, group_no = "", sheet_no = "", tutor_name = "", files = None):
         self.group_no = group_no
+        self.sheet_no = sheet_no
+        self.tutor_name = tutor_name
         if(files is None):
             self.files = []
         else:
@@ -51,9 +53,6 @@ class Data:
 
     def add_file(self, path):
         self.files.append(path)
-
-    def set_group_no(self, value):
-        self.group_no = value
 
     def get_file_by_path(self, path):
         for f in self.files:
