@@ -220,8 +220,8 @@ class MainWindow(QMainWindow):
 
     def comment_text_changed(self):
         new_text = self.ui.plainTextEditComment.document().toPlainText()
-        new_text_utf = unicode(new_text.toUtf8(), encoding="UTF-8")
-        self.current_comment.set_text(new_text_utf)
+        unicoded = str(new_text.toUtf8()).decode("utf-8")
+        self.current_comment.set_text(unicoded)
         self.ui.listWidgetComments.currentItem().setText(new_text[0:40])
 
 
@@ -286,11 +286,11 @@ class MainWindow(QMainWindow):
 
 
     def group_no_changed(self, new_value):
-        self.data.group_no = str(new_value)
+        self.data.group_no = unicode(new_value.toUtf8(), encoding="UTF-8")
         self.save_yaml()
 
     def sheet_no_changed(self, new_value):
-        self.data.sheet_no = str(new_value)
+        self.data.sheet_no = unicode(new_value.toUtf8(), encoding="UTF-8")
         self.save_yaml()
 
     def tutor_name_changed(self, new_value):
@@ -322,7 +322,7 @@ class MainWindow(QMainWindow):
     def export(self):
         #is called whenever the user clicks on export
 
-        output_name = "Code_Anmerkungen_" + str(self.data.group_no) + "_" + str(self.data.sheet_no) + ".tex"
+        output_name = "Code_Anmerkungen_" + self.data.group_no + "_" + self.data.sheet_no + ".tex"
         path = self.save_folder
         file_name = path + "/" + output_name
 
