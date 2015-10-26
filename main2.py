@@ -1,3 +1,4 @@
+# coding: utf8
 __author__ = 'aboeckmann'
 
 from interface import *
@@ -9,8 +10,8 @@ import Exporter
 
 group_no = "D02"
 d = Data(group_no)
-d.tutor_name="Master und Hellfire"
-d.sheet_no = 01
+d.tutor_name="Master und Hellfire Berghöfer"
+d.sheet_no = "01"
 
 file_1 = File("./test_code/ConfigurationHelper.hpp")
 file_2 = File("./test_code/test_transform_graph.cpp")

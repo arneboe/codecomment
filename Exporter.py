@@ -92,7 +92,7 @@ class Export(object):
         
         #add general fields:
         self.output = self.output.replace("<gruppe>", data.group_no);
-        self.output = self.output.replace("<nummer>", "%02i" % data.sheet_no);
+        self.output = self.output.replace("<nummer>", data.sheet_no);
         self.output = self.output.replace("<tutor>", data.tutor_name);
         
         fo = open(path,'w');
