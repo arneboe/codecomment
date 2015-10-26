@@ -62,10 +62,14 @@ class Export(object):
                 snip_start = max(com.markers[0].start_line - 5, 0);
                 snip_end = min(com.markers[0].end_line + 5, len(inhalt));
                 snippet = inhalt[snip_start:snip_end + 1];
-                print("Laenge: " + str(len(snippet)))
                 index = min(5,snip_start);
-                snippet[index] = self.tex_escape(snippet[index])
-                snippet[index] = "%\colorbox{BurntOrange}{" + snippet[index] + "}%";
+                #generate new string with highlighting from to col index.
+                newline = "";
+                newline += snippet[index][0:com.markers[0].start_col];
+                newline +="@*\colorbox{BurntOrange}{";
+                newline += self.tex_escape(snippet[index][com.markers[0].start_col:com.markers[0].end_col + 1]);
+                newline += "}*@" + snippet[index][com.markers[0].end_col + 1 :];
+                snippet[index] = newline;
                 codestr = "\n".join(snippet);
                 
                 #generate comment for snippet:
