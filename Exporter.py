@@ -62,7 +62,7 @@ class Export(object):
                 snip_start = max(com.markers[0].start_line - 5, 0);
                 snip_end = min(com.markers[0].end_line + 5, len(inhalt));
                 snippet = inhalt[snip_start:snip_end + 1];
-                index = min(5,snip_start);
+                index = min(5,com.markers[0].start_line);
                 #generate new string with highlighting from to col index.
                 newline = "";
                 newline += snippet[index][0:com.markers[0].start_col];
