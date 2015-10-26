@@ -9,6 +9,8 @@ import Exporter
 
 group_no = "D02"
 d = Data(group_no)
+d.tutor_name="Master und Hellfire"
+d.sheet_no = 01
 
 file_1 = File("./test_code/ConfigurationHelper.hpp")
 file_2 = File("./test_code/test_transform_graph.cpp")
@@ -42,7 +44,7 @@ f2_comment_2.add_marker(f2_c2_marker_1)
 print("bla")
 
 ex = Exporter.Export();
-ex.export(d, "./testfile.tex")
+ex.export(d, "./texout/testfile.tex")
 
 '''
 class Marker:

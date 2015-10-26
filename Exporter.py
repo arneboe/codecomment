@@ -5,6 +5,7 @@ Created on 23.10.2015
 @author: Elmar Berghöfer
 '''
 from interface import *
+from os.path import basename
 
 
 
@@ -25,6 +26,7 @@ class Export(object):
         self.output = "";
         print("Export");
         self.load_templates();
+        self.window = 4; #defines the lines snipped out before and after the marker.
     
     
     def load(self, path):
@@ -53,16 +55,17 @@ class Export(object):
         
         # add comments for each file in data object:
         for f in data.files:
-            self.commentList.append("\\section{" + self.tex_escape(f.path) + "}");
+            self.commentList.append("\\section{" + basename(self.tex_escape(f.path)) + "}");
             inhalt = self.load(f.path);
             
             # for each comment:
             for com in f.comments:
                 #get code snippet
-                snip_start = max(com.markers[0].start_line - 5, 0);
-                snip_end = min(com.markers[0].end_line + 5, len(inhalt));
-                snippet = inhalt[snip_start:snip_end + 1];
-                index = min(5,com.markers[0].start_line);
+                snip_start = max(com.markers[0].start_line - self.window, 0);
+                snip_end = min(com.markers[0].end_line + self.window, len(inhalt));
+                snippet = inhalt[snip_start:(snip_end + 1)];
+                print("extracting from %i to %i" % (snip_start, snip_end))
+                index = min(self.window,com.markers[0].start_line);
                 #generate new string with highlighting from to col index.
                 newline = "";
                 newline += snippet[index][0:com.markers[0].start_col];
@@ -87,8 +90,10 @@ class Export(object):
         #build output string:
         self.output = self.mainTemplate.replace("<comments>", "\n".join(self.commentList));
         
-        #add group number:
+        #add general fields:
         self.output = self.output.replace("<gruppe>", data.group_no);
+        self.output = self.output.replace("<nummer>", "%02i" % data.sheet_no);
+        self.output = self.output.replace("<tutor>", data.tutor_name);
         
         fo = open(path,'w');
         fo.write(self.output);
