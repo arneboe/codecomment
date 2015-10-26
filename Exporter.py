@@ -6,7 +6,7 @@ Created on 23.10.2015
 '''
 from interface import *
 from os.path import basename
-
+import codecs
 
 
 class Export(object):
@@ -23,15 +23,16 @@ class Export(object):
         self.mainTemplate = None;
         self.commentTemplate = None;
         self.commentList = [];
-        self.output = "";
+        self.output = unicode("");
         print("Export");
         self.load_templates();
         self.window = windowsize; #defines the lines snipped out before and after the marker.
     
     
     def load(self, path):
-        fi = open(path,'r');
-        retVal = fi.read().split("\n");
+        fi = codecs.open(path, encoding='utf-8', mode='r');
+        retVal = fi.read();
+        retVal = retVal.split(u"\n")
         fi.close(); 
         #print("Length of file: "+str(len(retVal)))
         return retVal;
@@ -41,10 +42,10 @@ class Export(object):
         '''
         This method loads the template files.
         '''
-        fp = open('./tex_templates/main.tex', 'r');
+        fp = codecs.open('./tex_templates/main.tex', encoding='utf-8', mode='r');
         self.mainTemplate = fp.read();
         fp.close();
-        fp = open('./tex_templates/comment.tex','r');
+        fp = codecs.open('./tex_templates/comment.tex', encoding='utf-8', mode='r');
         self.commentTemplate = fp.read();
         fp.close();
         
@@ -55,7 +56,7 @@ class Export(object):
         
         # add comments for each file in data object:
         for f in data.files:
-            self.commentList.append("\\section{" + basename(self.tex_escape(f.path)) + "}");
+            self.commentList.append(u"\\section{" + basename(self.tex_escape(f.path)) + u"}");
             inhalt = self.load(f.path);
             
             # for each comment:
@@ -67,35 +68,36 @@ class Export(object):
                 
                 index = min(self.window,com.markers[0].start_line);
                 #generate new string with highlighting from to col index.
-                newline = "";
+                newline = unicode("");
                 newline += snippet[index][0:com.markers[0].start_col];
-                newline +="@*\colorbox{BurntOrange}{";
+                newline += u"@*\colorbox{BurntOrange}{";
                 newline += self.tex_escape(snippet[index][com.markers[0].start_col:com.markers[0].end_col + 1]);
-                newline += "}*@" + snippet[index][com.markers[0].end_col + 1 :];
+                newline += u"}*@" + snippet[index][com.markers[0].end_col + 1 :];
                 snippet[index] = newline;
-                codestr = "\n".join(snippet);
+                codestr = u"\n".join(snippet);
                 
                 #generate comment for snippet:
                 comment = self.commentTemplate;
-                comment = comment.replace("<startline>",str(snip_start + 1)); #line numbers start with 1 instead of 0!
-                comment = comment.replace("<code>",codestr);
-                comment = comment.replace("<comment>", com.text);
-                comment += "\\\\";
+                comment = comment.replace(u"<startline>",str(snip_start + 1)); #line numbers start with 1 instead of 0!
+                comment = comment.replace(u"<code>",codestr);
+                comment = comment.replace(u"<comment>", com.text);
+                comment += u"\\\\";
                 
                 self.commentList.append(comment);
         
             #at the end clearpage for next section:
-            self.commentList.append("\\clearpage");
+            self.commentList.append(u"\\clearpage");
         
         #build output string:
-        self.output = self.mainTemplate.replace("<comments>", "\n".join(self.commentList));
-        
+        join_str = u"\n".join(self.commentList);
+        self.output = self.mainTemplate.replace(u"<comments>", join_str);
+                
         #add general fields:
-        self.output = self.output.replace("<gruppe>", data.group_no);
-        self.output = self.output.replace("<nummer>", data.sheet_no);
-        self.output = self.output.replace("<tutor>", data.tutor_name);
+        self.output = self.output.replace(u"<gruppe>", data.group_no);
+        self.output = self.output.replace(u"<nummer>", data.sheet_no);
+        self.output = self.output.replace(u"<tutor>", data.tutor_name);
         
-        fo = open(path,'w');
+        fo = codecs.open(path,encoding='utf-8', mode='w');
         fo.write(self.output);
         fo.close();
         

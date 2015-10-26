@@ -8,23 +8,23 @@ import Exporter
 
 
 
-group_no = "D02"
+group_no = u"D02"
 d = Data(group_no)
-d.tutor_name="Master und Hellfire Berghöfer"
-d.sheet_no = "01"
+d.tutor_name=u"Master und Hellfire Berghöfer"
+d.sheet_no = u"01"
 
-file_1 = File("./test_code/ConfigurationHelper.hpp")
-file_2 = File("./test_code/test_transform_graph.cpp")
+file_1 = File(u"./test_code/ConfigurationHelper.hpp")
+file_2 = File(u"./test_code/test_transform_graph.cpp")
 d.add_file(file_1)
 d.add_file(file_2)
 
-f1_comment_1 = Comment("test 123 hallo bla bla")
-f1_comment_2 = Comment("aaaaaaaaaa wdew qdwq dwqd wqd frtg ftghf th fth gzhvgz h fh")
+f1_comment_1 = Comment(u"test 123 hallo bla bla")
+f1_comment_2 = Comment(u"aaaaaaaaaa wdew qdwq dwqd wqd frtg ftghf th fth gzhvgz h fh")
 file_1.add_comment(f1_comment_1)
 file_1.add_comment(f1_comment_2)
 
-f2_comment_1 = Comment("bla blablab blabla blablab blabla blablab blabla blablab bla")
-f2_comment_2 = Comment("aaaaa bbbb cccc ddd eee fff ggg")
+f2_comment_1 = Comment(u"bla blablab blabla blablab blabla blablab blabla blablab bla")
+f2_comment_2 = Comment(u"aaaaa bbbb cccc ddd eee fff ggg")
 file_2.add_comment(f2_comment_1)
 file_2.add_comment(f2_comment_2)
 
