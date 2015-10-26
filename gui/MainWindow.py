@@ -285,14 +285,15 @@ class MainWindow(QMainWindow):
 
 
     def group_no_changed(self, new_value):
-        self.data.group_no = unicode(new_value.toUtf8(), encoding="UTF-8")
+        self.data.group_no = str(new_value)
         self.save_yaml()
 
     def sheet_no_changed(self, new_value):
-        self.data.sheet_no = unicode(new_value.toUtf8(), encoding="UTF-8")
+        self.data.sheet_no = str(new_value)
         self.save_yaml()
 
     def tutor_name_changed(self, new_value):
+        #because names can contain lots of strange chars
         self.data.tutor_name = unicode(new_value.toUtf8(), encoding="UTF-8")
         self.save_yaml()
 
