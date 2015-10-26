@@ -15,7 +15,7 @@ class Export(object):
     '''
 
 
-    def __init__(self):
+    def __init__(self, windowsize=4):
         '''
         Constructor
         '''
@@ -26,14 +26,14 @@ class Export(object):
         self.output = "";
         print("Export");
         self.load_templates();
-        self.window = 4; #defines the lines snipped out before and after the marker.
+        self.window = windowsize; #defines the lines snipped out before and after the marker.
     
     
     def load(self, path):
         fi = open(path,'r');
         retVal = fi.read().split("\n");
         fi.close(); 
-        print("Length of file: "+str(len(retVal)))
+        #print("Length of file: "+str(len(retVal)))
         return retVal;
             
             
@@ -64,7 +64,7 @@ class Export(object):
                 snip_start = max(com.markers[0].start_line - self.window, 0);
                 snip_end = min(com.markers[0].end_line + self.window, len(inhalt));
                 snippet = inhalt[snip_start:(snip_end + 1)];
-                print("extracting from %i to %i" % (snip_start, snip_end))
+                
                 index = min(self.window,com.markers[0].start_line);
                 #generate new string with highlighting from to col index.
                 newline = "";
