@@ -1,1 +1,10 @@
 /.idea/
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf
+*.synctex.gz
+*.tex
+*.tex~
+*.pyc
