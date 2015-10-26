@@ -167,7 +167,7 @@ class MainWindow(QMainWindow):
     def add_comment(self):
         #is called whenever the user clicks "add comment"
         color_name = self.color_names[self.next_comment_no % len(self.color_names)]
-        initial_comment_text = "comment #" + str(self.next_comment_no)
+        initial_comment_text = "comment " + str(self.next_comment_no)
         file = self.data.get_file_by_path(self.get_current_file_path())
         comment = Comment(initial_comment_text, [])
         file.add_comment(comment)
