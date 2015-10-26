@@ -66,6 +66,7 @@ class MainWindow(QMainWindow):
         self.ui.actionRemove_Comment.setEnabled(False)
         self.ui.actionRemove_Comment.triggered.connect(self.remove_comment)
         self.ui.actionExport.triggered.connect(self.export)
+        self.ui.actionExport.setEnabled(False)
 
 
         self.ui.listWidgetFiles.currentItemChanged.connect(self.selected_file_changed)
@@ -187,6 +188,7 @@ class MainWindow(QMainWindow):
         item.setIcon(icon)
 
         self.ui.actionRemove_Comment.setEnabled(True)
+        self.ui.actionExport.setEnabled(True)
 
 
         #as soon as we have one comment, we can enable the "add selection" button
@@ -319,7 +321,7 @@ class MainWindow(QMainWindow):
         #is called whenever the user clicks on export
 
         output_name = "Code_Anmerkungen_" + str(self.data.group_no) + "_" + str(self.data.sheet_no) + ".tex"
-        path = "."
+        path = self.save_folder
         file_name = path + "/" + output_name
 
         save_name = QFileDialog.getSaveFileName(self, "Export to Tex", file_name, "Tex files (*.tex)");
