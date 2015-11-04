@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>804</width>
+    <width>747</width>
     <height>629</height>
    </rect>
   </property>
@@ -51,23 +51,37 @@
       <item row="1" column="1">
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <layout class="QFormLayout" name="formLayout">
-          <property name="fieldGrowthPolicy">
-           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-          </property>
-          <item row="0" column="0">
-           <widget class="QSpinBox" name="spinBoxRadius">
-            <property name="value">
-             <number>4</number>
-            </property>
-           </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <layout class="QFormLayout" name="formLayout_2">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Start Line</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="spinBoxStartLine"/>
+            </item>
+           </layout>
           </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Code snippet radius</string>
+          <item>
+           <layout class="QFormLayout" name="formLayout">
+            <property name="fieldGrowthPolicy">
+             <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
             </property>
-           </widget>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>End Line</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="spinBoxEndLine"/>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>

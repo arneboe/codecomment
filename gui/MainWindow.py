@@ -74,8 +74,10 @@ class MainWindow(QMainWindow):
         self.ui.plainTextEditComment.setReadOnly(True)
         self.next_comment_no = 0
 
-        self.ui.spinBoxRadius.setEnabled(False)
-        self.ui.spinBoxRadius.valueChanged.connect(self.snippet_radius_changed)
+        self.ui.spinBoxEndLine.setEnabled(False)
+        self.ui.spinBoxStartLine.setEnabled(False)
+        self.ui.spinBoxStartLine.valueChanged.connect(self.start_line_changed)
+        self.ui.spinBoxEndLine.valueChanged.connect(self.end_line_changed)
 
         self.current_comment = None #the currently selected comment, if any
 
@@ -167,14 +169,20 @@ class MainWindow(QMainWindow):
     def add_comment_0_radius(self):
         #is called whenever the user clicks "add comment (radius=0)
         self.add_comment()
-        self.ui.spinBoxRadius.setValue(0)
+        #at this point there should only be one marker
+        assert(len(self.current_comment.markers) == 1)
+        #use line number of first marker
+        line = self.current_comment.markers[0].line_index
+        self.ui.spinBoxEndLine.setValue(line)
+        self.ui.spinBoxStartLine.setValue(line)
 
     def add_comment(self):
         #is called whenever the user clicks "add comment"
         color_name = self.color_names[self.next_comment_no % len(self.color_names)]
         initial_comment_text = "comment " + str(self.next_comment_no)
         file = self.data.get_file_by_path(self.get_current_file_path())
-        comment = Comment(initial_comment_text, [], 4)
+        current_line = self.ui.plainTextEditCode.textCursor().blockNumber()
+        comment = Comment(initial_comment_text, [], current_line - 4, current_line + 4) #0, 0 will be changed after the selection has been added
         file.add_comment(comment)
         self.next_comment_no += 1
 
@@ -194,6 +202,8 @@ class MainWindow(QMainWindow):
 
         self.ui.actionRemove_Comment.setEnabled(True)
         self.ui.actionExport.setEnabled(True)
+
+        #add the initial selection
         self.add_selection()
 
 
@@ -205,16 +215,21 @@ class MainWindow(QMainWindow):
             comment_text = self.current_comment.get_text()
             self.ui.plainTextEditComment.setPlainText(comment_text)
             self.ui.plainTextEditComment.setReadOnly(False)
-            self.ui.spinBoxRadius.setEnabled(True)
+            self.ui.spinBoxStartLine.setEnabled(True)
+            self.ui.spinBoxEndLine.setEnabled(True)
 
-            self.ui.spinBoxRadius.blockSignals(True)
-            self.ui.spinBoxRadius.setValue(self.current_comment.radius)
-            self.ui.spinBoxRadius.blockSignals(False)
+            self.ui.spinBoxStartLine.blockSignals(True)
+            self.ui.spinBoxStartLine.setValue(self.current_comment.start_line)
+            self.ui.spinBoxStartLine.blockSignals(False)
+
+            self.ui.spinBoxEndLine.blockSignals(True)
+            self.ui.spinBoxEndLine.setValue(self.current_comment.end_line)
+            self.ui.spinBoxEndLine.blockSignals(False)
 
             #jump to first marker
             if len(self.current_comment.markers) > 0:
                 first_marker = self.current_comment.markers[0]
-                line = first_marker.start_line
+                line = first_marker.line_index
                 cursor = QTextCursor(self.ui.plainTextEditCode.document().findBlockByNumber(line)) #only works without word wrap
                 self.ui.plainTextEditCode.setTextCursor(cursor)
 
@@ -222,7 +237,8 @@ class MainWindow(QMainWindow):
             self.ui.plainTextEditComment.clear()
             self.ui.plainTextEditComment.setReadOnly(True)
             self.ui.actionRemove_Comment.setEnabled(False)
-            self.ui.spinBoxRadius.setEnabled(False)
+            self.ui.spinBoxStartLine.setEnabled(False)
+            self.ui.spinBoxEndLine.setEnabled(False)
             self.current_comment = None
         self.ui.plainTextEditComment.blockSignals(False)
 
@@ -262,8 +278,9 @@ class MainWindow(QMainWindow):
             start_column = cursor.columnNumber()
             cursor.setPosition(end)
             end_line = cursor.blockNumber()
+            #FIXME end_line should be == start_line
             end_column = cursor.columnNumber()
-            marker = Marker(start_line, end_line, start_column, end_column)
+            marker = Marker(start_line, start_column, end_column)
             self.current_comment.add_marker(marker)
             color_name = self.get_current_comment_color_name()
             metaData = MarkerMetaData(marker, color_name, start, end)
@@ -341,5 +358,15 @@ class MainWindow(QMainWindow):
             ex = Export()
             ex.export(self.data, str(save_name))
 
-    def snippet_radius_changed(self, newValue):
-        self.current_comment.radius = newValue
+    def start_line_changed(self, newValue):
+        if newValue > self.current_comment.end_line:
+            newValue = self.current_comment.end_line
+            self.ui.spinBoxStartLine.setValue(newValue)
+        self.current_comment.start_line = newValue
+
+
+    def end_line_changed(self, newValue):
+        if newValue < self.current_comment.start_line:
+            newValue = self.current_comment.start_line
+            self.ui.spinBoxEndLine.setValue(newValue)
+        self.current_comment.end_line = newValue
