@@ -1,16 +1,16 @@
 __author__ = 'aboeckmann'
 
 class Marker:
-    def __init__(self, start_line, end_line, start_col, end_col):
-        self.start_line = start_line
-        self.end_line = end_line
+    def __init__(self, line_index, start_col, end_col):
+        self.line_index = line_index
         self.start_col = start_col
         self.end_col = end_col
 
 class Comment:
-    def __init__(self, text="", markers=None, radius=4):
+    def __init__(self, text="", markers=None, startl=0, endl=0):
         self.text = text
-        self.radius = radius
+        self.start_line = startl;
+        self.end_line = endl;
         if markers is None:
             self.markers = []
         else:
