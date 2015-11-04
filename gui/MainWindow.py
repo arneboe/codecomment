@@ -61,6 +61,7 @@ class MainWindow(QMainWindow):
         self.ui.actionOpen.triggered.connect(self.open)
         self.ui.actionAdd_Comment.setEnabled(False)#will be enabeled as soon as  a file is added
         self.ui.actionAdd_Comment.triggered.connect(self.add_comment)
+        self.ui.actionAdd_Comment_radius_0.setEnabled(False)
         self.ui.actionAdd_Comment_radius_0.triggered.connect(self.add_comment_0_radius)
         self.ui.actionRemove_Comment.setEnabled(False)
         self.ui.actionRemove_Comment.triggered.connect(self.remove_comment)
@@ -120,6 +121,7 @@ class MainWindow(QMainWindow):
         if(len(files) > 0):
             self.ui.listWidgetFiles.setCurrentItem(self.ui.listWidgetFiles.item(0))
             self.ui.actionAdd_Comment.setEnabled(True)
+            self.ui.actionAdd_Comment_radius_0.setEnabled(True)
 
 
     def clear_comment_list(self):
