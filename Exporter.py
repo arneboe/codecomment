@@ -15,7 +15,7 @@ class Export(object):
     '''
 
 
-    def __init__(self, windowsize=4):
+    def __init__(self):
         '''
         Constructor
         '''
@@ -26,7 +26,6 @@ class Export(object):
         self.output = unicode("");
         print("Export");
         self.load_templates();
-        self.window = windowsize; #defines the lines snipped out before and after the marker.
     
     
     def load(self, path):
@@ -62,11 +61,12 @@ class Export(object):
             # for each comment:
             for com in f.comments:
                 #get code snippet
-                snip_start = max(com.markers[0].start_line - self.window, 0);
-                snip_end = min(com.markers[0].end_line + self.window, len(inhalt));
+                snip_start = max(com.start_line,0);
+                snip_end = min(com.end_line, len(inhalt));
                 snippet = inhalt[snip_start:(snip_end + 1)];
                 
-                index = min(self.window,com.markers[0].start_line);
+                # get index.
+                index = com.markers[0].line_index - snip_start;
                 #generate new string with highlighting from to col index.
                 newline = unicode("");
                 newline += snippet[index][0:com.markers[0].start_col];
