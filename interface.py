@@ -8,8 +8,9 @@ class Marker:
         self.end_col = end_col
 
 class Comment:
-    def __init__(self, text="", markers=None):
+    def __init__(self, text="", markers=None, radius=4):
         self.text = text
+        self.radius = radius
         if markers is None:
             self.markers = []
         else:

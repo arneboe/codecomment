@@ -59,10 +59,9 @@ class MainWindow(QMainWindow):
 
 
         self.ui.actionOpen.triggered.connect(self.open)
-        self.ui.actionAdd_Selection.setEnabled(False)#is disbled initially because no comment is selected on startup
         self.ui.actionAdd_Comment.setEnabled(False)#will be enabeled as soon as  a file is added
         self.ui.actionAdd_Comment.triggered.connect(self.add_comment)
-        self.ui.actionAdd_Selection.triggered.connect(self.add_selection)
+        self.ui.actionAdd_Comment_radius_0.triggered.connect(self.add_comment_0_radius)
         self.ui.actionRemove_Comment.setEnabled(False)
         self.ui.actionRemove_Comment.triggered.connect(self.remove_comment)
         self.ui.actionExport.triggered.connect(self.export)
@@ -75,7 +74,8 @@ class MainWindow(QMainWindow):
         self.ui.plainTextEditComment.setReadOnly(True)
         self.next_comment_no = 0
 
-
+        self.ui.spinBoxRadius.setEnabled(False)
+        self.ui.spinBoxRadius.valueChanged.connect(self.snippet_radius_changed)
 
         self.current_comment = None #the currently selected comment, if any
 
@@ -164,12 +164,17 @@ class MainWindow(QMainWindow):
         comment = self.comments[item]
         return self.commentMetaData[comment].color_name
 
+    def add_comment_0_radius(self):
+        #is called whenever the user clicks "add comment (radius=0)
+        self.add_comment()
+        self.ui.spinBoxRadius.setValue(0)
+
     def add_comment(self):
         #is called whenever the user clicks "add comment"
         color_name = self.color_names[self.next_comment_no % len(self.color_names)]
         initial_comment_text = "comment " + str(self.next_comment_no)
         file = self.data.get_file_by_path(self.get_current_file_path())
-        comment = Comment(initial_comment_text, [])
+        comment = Comment(initial_comment_text, [], 4)
         file.add_comment(comment)
         self.next_comment_no += 1
 
@@ -189,10 +194,8 @@ class MainWindow(QMainWindow):
 
         self.ui.actionRemove_Comment.setEnabled(True)
         self.ui.actionExport.setEnabled(True)
+        self.add_selection()
 
-
-        #as soon as we have one comment, we can enable the "add selection" button
-        self.ui.actionAdd_Selection.setEnabled(True)
 
     def selected_comment_changed(self, curr, prev):
         #called whenever another comment is selected
@@ -202,7 +205,12 @@ class MainWindow(QMainWindow):
             comment_text = self.current_comment.get_text()
             self.ui.plainTextEditComment.setPlainText(comment_text)
             self.ui.plainTextEditComment.setReadOnly(False)
-            self.ui.actionAdd_Selection.setEnabled(True)
+            self.ui.spinBoxRadius.setEnabled(True)
+
+            self.ui.spinBoxRadius.blockSignals(True)
+            self.ui.spinBoxRadius.setValue(self.current_comment.radius)
+            self.ui.spinBoxRadius.blockSignals(False)
+
             #jump to first marker
             if len(self.current_comment.markers) > 0:
                 first_marker = self.current_comment.markers[0]
@@ -213,8 +221,8 @@ class MainWindow(QMainWindow):
         else:
             self.ui.plainTextEditComment.clear()
             self.ui.plainTextEditComment.setReadOnly(True)
-            self.ui.actionAdd_Selection.setEnabled(False)
             self.ui.actionRemove_Comment.setEnabled(False)
+            self.ui.spinBoxRadius.setEnabled(False)
             self.current_comment = None
         self.ui.plainTextEditComment.blockSignals(False)
 
@@ -332,3 +340,6 @@ class MainWindow(QMainWindow):
             self.set_save_path(dirname(str(save_name)))
             ex = Export()
             ex.export(self.data, str(save_name))
+
+    def snippet_radius_changed(self, newValue):
+        self.current_comment.radius = newValue

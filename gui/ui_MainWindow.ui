@@ -24,9 +24,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QPlainTextEdit" name="plainTextEditComment"/>
-      </item>
       <item row="1" column="0">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
@@ -51,6 +48,34 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="1">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QFormLayout" name="formLayout">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+          </property>
+          <item row="0" column="0">
+           <widget class="QSpinBox" name="spinBoxRadius">
+            <property name="value">
+             <number>4</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Code snippet radius</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPlainTextEdit" name="plainTextEditComment"/>
+        </item>
+       </layout>
+      </item>
      </layout>
     </item>
    </layout>
@@ -68,8 +93,8 @@
    <addaction name="actionOpen"/>
    <addaction name="actionExport"/>
    <addaction name="actionAdd_Comment"/>
+   <addaction name="actionAdd_Comment_radius_0"/>
    <addaction name="actionRemove_Comment"/>
-   <addaction name="actionAdd_Selection"/>
   </widget>
   <action name="actionExport">
    <property name="text">
@@ -98,17 +123,6 @@
     <string>Alt+C</string>
    </property>
   </action>
-  <action name="actionAdd_Selection">
-   <property name="text">
-    <string>Add Selection</string>
-   </property>
-   <property name="toolTip">
-    <string>alt + s</string>
-   </property>
-   <property name="shortcut">
-    <string>Alt+S</string>
-   </property>
-  </action>
   <action name="actionRemove_Comment">
    <property name="text">
     <string>Remove Comment</string>
@@ -118,6 +132,17 @@
    </property>
    <property name="shortcut">
     <string>Alt+R</string>
+   </property>
+  </action>
+  <action name="actionAdd_Comment_radius_0">
+   <property name="text">
+    <string>Add Comment (radius=0)</string>
+   </property>
+   <property name="toolTip">
+    <string>alt+v</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+V</string>
    </property>
   </action>
  </widget>
