@@ -112,20 +112,27 @@
    <addaction name="actionAdd_Comment_radius_0"/>
    <addaction name="actionRemove_Comment"/>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionExport">
    <property name="text">
-    <string>&amp;Export</string>
+    <string>Export</string>
+   </property>
+   <property name="toolTip">
+    <string>alt+e</string>
    </property>
    <property name="shortcut">
-    <string>E</string>
+    <string>Alt+E</string>
    </property>
   </action>
   <action name="actionOpen">
    <property name="text">
-    <string>&amp;Open</string>
+    <string>Open</string>
+   </property>
+   <property name="toolTip">
+    <string>alt+o</string>
    </property>
    <property name="shortcut">
-    <string>O</string>
+    <string>Alt+O</string>
    </property>
   </action>
   <action name="actionAdd_Comment">
@@ -165,10 +172,22 @@
    <property name="text">
     <string>Save</string>
    </property>
+   <property name="toolTip">
+    <string>ctrl+s</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionLoad">
    <property name="text">
     <string>Load</string>
+   </property>
+   <property name="toolTip">
+    <string>ctrl+l</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
    </property>
   </action>
  </widget>

@@ -89,13 +89,16 @@ class MainWindow(QMainWindow):
 
         self.default_color = self.ui.plainTextEditCode.palette().color(QPalette.Base)
 
+        self.save_name = "" #file name used for saving
         self.ui.show();
 
     def save(self):
-        save_name = QFileDialog.getSaveFileName(self, "Save State", "save.yaml" , "Yaml files (*.yaml)")
-        if len(save_name) > 0:
-            with open(save_name, 'w') as f:
+        if len(self.save_name) <= 0:
+            self.save_name = QFileDialog.getSaveFileName(self, "Save State", "save.yaml" , "Yaml files (*.yaml)")
+        if len(self.save_name) > 0:
+            with open(self.save_name, 'w') as f:
                 f.write(dump(self.data, default_flow_style=False))
+                self.ui.statusBar.showMessage("Saved " + self.save_name, 2000)
 
 
     def load(self):
@@ -167,6 +170,7 @@ class MainWindow(QMainWindow):
             self.data.add_file(File(str(f)))
             self.add_file(f)
         if(len(files) > 0):
+            self.ui.actionLoad.setEnabled(False)#loading does not work after opening because it overwrites self.data
             self.ui.listWidgetFiles.setCurrentItem(self.ui.listWidgetFiles.item(0))
 
     def add_file(self, f):
