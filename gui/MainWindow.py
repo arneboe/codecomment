@@ -67,7 +67,9 @@ class MainWindow(QMainWindow):
         self.ui.actionRemove_Comment.triggered.connect(self.remove_comment)
         self.ui.actionExport.triggered.connect(self.export)
         self.ui.actionExport.setEnabled(False)
-
+        self.ui.actionSave.setEnabled(False)
+        self.ui.actionSave.triggered.connect(self.save)
+        self.ui.actionLoad.triggered.connect(self.load)
 
         self.ui.listWidgetFiles.currentItemChanged.connect(self.selected_file_changed)
         self.ui.listWidgetComments.currentItemChanged.connect(self.selected_comment_changed)
@@ -88,6 +90,53 @@ class MainWindow(QMainWindow):
         self.default_color = self.ui.plainTextEditCode.palette().color(QPalette.Base)
 
         self.ui.show();
+
+    def save(self):
+        save_name = QFileDialog.getSaveFileName(self, "Save State", "save.yaml" , "Yaml files (*.yaml)")
+        if len(save_name) > 0:
+            with open(save_name, 'w') as f:
+                f.write(dump(self.data, default_flow_style=False))
+
+
+    def load(self):
+        file_name = QFileDialog.getOpenFileName(parent=self, caption="Load State", filter="Yaml files (*.yaml)")
+        if len(file_name) > 0:
+            with open(file_name, "r") as f:
+                self.data = load(f)
+                for file in self.data.files:
+                    self.add_file(file.path)
+                    #we need to load the file content into the ui,otherwise the marker creation
+                    #does not work because it needs to move the cursor inside the text.
+                    #The user never acutally sees this
+                    with open(file.path, 'r') as f:
+                        self.ui.plainTextEditCode.setPlainText(f.read())
+                    for comment in file.comments:
+                        self.add_comment_to_gui(comment)
+                        for marker in comment.markers:
+                            color = self.commentMetaData[comment].color_name
+                            self.load_marker(marker, color)
+                if(len(self.data.files) > 0):
+                    self.ui.listWidgetFiles.setCurrentItem(self.ui.listWidgetFiles.item(0))
+
+
+    def load_marker(self, marker, color_name):
+        start_cursor = self.ui.plainTextEditCode.textCursor()
+        start_cursor.setPosition(0, QTextCursor.MoveAnchor); #Moves the cursor to the beginning of the document
+        #Now moves the cursor to the line "line" and in the column "index"
+        start_cursor.movePosition(QTextCursor.Down, QTextCursor.MoveAnchor, marker.line_index);
+        start_cursor.movePosition(QTextCursor.NextCharacter, QTextCursor.MoveAnchor, marker.start_col);
+        start_pos = start_cursor.position()
+
+        end_cursor = self.ui.plainTextEditCode.textCursor()
+        end_cursor.setPosition(0,QTextCursor.MoveAnchor); #Moves the cursor to the beginning of the document
+        #Now moves the cursor to the line "line" and in the column "index"
+        end_cursor.movePosition(QTextCursor.Down, QTextCursor.MoveAnchor, marker.line_index);
+        end_cursor.movePosition(QTextCursor.NextCharacter, QTextCursor.MoveAnchor, marker.end_col);
+        end_pos = end_cursor.position()
+
+        metadata = MarkerMetaData(marker, color_name, start_pos, end_pos)
+        self.markerMetaData[marker] = metadata
+
 
     def reset_code_edit(self):
         #this method exists because the highlighting sometimes breaks the formatting of the
@@ -115,13 +164,20 @@ class MainWindow(QMainWindow):
         #is called when the user clicks open
         files = QFileDialog.getOpenFileNames(self, 'Open file', '.')
         for f in files:
-            item = QListWidgetItem(f)
-            self.ui.listWidgetFiles.addItem(item)
             self.data.add_file(File(str(f)))
+            self.add_file(f)
         if(len(files) > 0):
             self.ui.listWidgetFiles.setCurrentItem(self.ui.listWidgetFiles.item(0))
-            self.ui.actionAdd_Comment.setEnabled(True)
-            self.ui.actionAdd_Comment_radius_0.setEnabled(True)
+
+    def add_file(self, f):
+        item = QListWidgetItem(f)
+        self.ui.listWidgetFiles.addItem(item)
+
+
+        #the following happens multiple times if you open multiple files, but who cares
+        self.ui.actionAdd_Comment.setEnabled(True)
+        self.ui.actionAdd_Comment_radius_0.setEnabled(True)
+        self.ui.actionSave.setEnabled(True)
 
 
     def clear_comment_list(self):
@@ -178,17 +234,12 @@ class MainWindow(QMainWindow):
         self.ui.spinBoxEndLine.setValue(line)
         self.ui.spinBoxStartLine.setValue(line)
 
-    def add_comment(self):
+    def add_comment_to_gui(self, comment):
         #is called whenever the user clicks "add comment"
         color_name = self.color_names[self.next_comment_no % len(self.color_names)]
-        initial_comment_text = "comment " + str(self.next_comment_no)
-        file = self.data.get_file_by_path(self.get_current_file_path())
-        current_line = self.ui.plainTextEditCode.textCursor().blockNumber()
-        comment = Comment(initial_comment_text, [], current_line - 4, current_line + 4) #0, 0 will be changed after the selection has been added
-        file.add_comment(comment)
         self.next_comment_no += 1
-
-        item = QListWidgetItem(initial_comment_text)
+        comment_text_short = comment.text[0:40]
+        item = QListWidgetItem(comment_text_short)
 
         #has to happen before listWidgetComments.addItem
         #because event handlers need to access the meta data
@@ -208,6 +259,13 @@ class MainWindow(QMainWindow):
         #add the initial selection
         self.add_selection()
 
+    def add_comment(self):
+        current_line = self.ui.plainTextEditCode.textCursor().blockNumber()
+        initial_comment_text = "comment " + str(self.next_comment_no)
+        comment = Comment(initial_comment_text, [], current_line - 4, current_line + 4) #0, 0 will be changed after the selection has been added
+        file = self.data.get_file_by_path(self.get_current_file_path())
+        file.add_comment(comment)
+        self.add_comment_to_gui(comment)
 
     def selected_comment_changed(self, curr, prev):
         #called whenever another comment is selected
@@ -254,7 +312,7 @@ class MainWindow(QMainWindow):
     def highlight_marker(self, marker_meta_data, color=None):
         '''
         highlights text according to the marker and the color in the current file
-        use metadata.color_name of color is Nnoe
+        use metadata.color_name if color is None
         '''
         cursor = self.ui.plainTextEditCode.textCursor()
         cursor.setPosition(marker_meta_data.start_pos)

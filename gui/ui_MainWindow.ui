@@ -105,6 +105,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
+   <addaction name="actionLoad"/>
    <addaction name="actionExport"/>
    <addaction name="actionAdd_Comment"/>
    <addaction name="actionAdd_Comment_radius_0"/>
@@ -157,6 +159,16 @@
    </property>
    <property name="shortcut">
     <string>Alt+V</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="text">
+    <string>Load</string>
    </property>
   </action>
  </widget>
