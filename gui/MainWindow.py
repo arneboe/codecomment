@@ -187,7 +187,6 @@ class MainWindow(QMainWindow):
         #is called whenever an item is selecetd in the file list
         f = open(curr.text(), 'r')
 
-        self.clear_markers()
         self.ui.plainTextEditCode.setPlainText(f.read())
         # update comment list if file changed
         f = self.data.get_file_by_path(curr.text())
@@ -196,7 +195,7 @@ class MainWindow(QMainWindow):
             item = self.commentMetaData[comment].item
             self.ui.listWidgetComments.addItem(item)
             self.ui.listWidgetComments.setCurrentItem(item)
-            self.highlight_all_markers(comment)
+        self.redraw_all_markers()
 
         if len(f.comments) > 0:
             self.ui.actionRemove_Comment.setEnabled(True)
@@ -207,6 +206,9 @@ class MainWindow(QMainWindow):
         self.clear_markers()
         path = self.get_current_file_path()
         f = self.data.get_file_by_path(path)
+        #first draw all backgrounds to avoid hiding any markers
+        for comment in f.comments:
+            self.highlight_all_backgrounds(comment)
         for comment in f.comments:
             self.highlight_all_markers(comment)
 
@@ -220,6 +222,14 @@ class MainWindow(QMainWindow):
         brush = QBrush(color)
         format.setBackground(brush)
         cursor.mergeCharFormat(format)
+
+    def highlight_all_backgrounds(self, comment):
+        '''
+        highlights all backgrounds of the comment
+        '''
+        for marker in comment.markers:
+            metadata = self.markerMetaData[marker]
+            self.highlight_background(metadata)
 
     def highlight_all_markers(self, comment):
         '''
@@ -323,13 +333,10 @@ class MainWindow(QMainWindow):
         self.ui.listWidgetComments.currentItem().setText(new_text[0:40])
 
 
-    def highlight_marker(self, marker_meta_data, color=None):
+    def highlight_background(self, marker_meta_data, color=None):
         '''
-        highlights text according to the marker and the color in the current file
-        use metadata.color_name if color is None
+        highlights the background of the marker. Use metadata.color_name if color is None
         '''
-
-        #first highlight the area
         cursor = self.ui.plainTextEditCode.textCursor()
         cursor.setPosition(0, QTextCursor.MoveAnchor); #Moves the cursor to the beginning of the document
         #Now moves the cursor to the start_line
@@ -348,7 +355,12 @@ class MainWindow(QMainWindow):
         format.setBackground(brush)
         cursor.mergeCharFormat(format)
 
-        #now highlight the marker
+
+    def highlight_marker(self, marker_meta_data, color=None):
+        '''
+        highlights text according to the marker and the color in the current file
+        use metadata.color_name if color is None
+        '''
         cursor = self.ui.plainTextEditCode.textCursor()
         cursor.setPosition(marker_meta_data.start_pos)
         cursor.setPosition(marker_meta_data.end_pos, QTextCursor.KeepAnchor)
@@ -388,7 +400,7 @@ class MainWindow(QMainWindow):
             metaData = MarkerMetaData(marker, color_name, start, end, self.current_comment.start_line,
                                       self.current_comment.end_line)
             self.markerMetaData[marker] = metaData
-            self.highlight_marker(metaData)
+            self.redraw_all_markers()
 
             #clear selection and re color
             cursor.clearSelection()
@@ -405,9 +417,8 @@ class MainWindow(QMainWindow):
             file.comments.remove(self.current_comment)
             #remove markings from text
             for marker in self.current_comment.markers:
-                meta_data = self.markerMetaData[marker]
-                self.highlight_marker(meta_data, self.default_color)
                 del self.markerMetaData[marker]
+            self.redraw_all_markers()
 
             #remove from gui
             self.ui.listWidgetComments.takeItem(self.ui.listWidgetComments.row(item)) #memory leak but I dont care
