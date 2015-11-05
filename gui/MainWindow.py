@@ -3,7 +3,7 @@ __author__ = 'aboeckmann'
 from PyQt4.QtGui import QMainWindow, QFileDialog, QFont,\
                         QListWidgetItem, QTextCharFormat, QBrush, QColor, QTextCursor,\
                         QListWidget, QTextOption, QPixmap, QIcon, QPlainTextEdit, QLineEdit,\
-                        QLabel, QPalette
+                        QLabel, QPalette, QWidget
 from PyQt4 import uic
 from Highlighter import Highlighter
 from interface import *
@@ -144,11 +144,11 @@ class MainWindow(QMainWindow):
     def reset_code_edit(self):
         #this method exists because the highlighting sometimes breaks the formatting of the
         #plain text edit, re creating it is far easier than figuring out what is wrong :D
-
-        self.ui.gridLayout.removeWidget(self.ui.plainTextEditCode)
         self.ui.plainTextEditCode.hide()
+        self.ui.plainTextEditCode.setParent(None)#remove from ui
+        self.ui.plainTextEditCode.deleteLater()
         self.ui.plainTextEditCode = QPlainTextEdit()
-        self.ui.gridLayout.addWidget(self.ui.plainTextEditCode, 0, 1)
+        self.ui.splitter.addWidget(self.ui.plainTextEditCode)
 
         #initialize the highlighter
         font = QFont()
