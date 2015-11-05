@@ -281,12 +281,13 @@ class MainWindow(QMainWindow):
         self.add_selection()
 
     def add_comment(self):
-        current_line = self.ui.plainTextEditCode.textCursor().blockNumber()
-        initial_comment_text = "comment " + str(self.next_comment_no)
-        comment = Comment(initial_comment_text, [], current_line - 4, current_line + 4) #0, 0 will be changed after the selection has been added
-        file = self.data.get_file_by_path(self.get_current_file_path())
-        file.add_comment(comment)
-        self.add_comment_to_gui(comment)
+        if self.ui.plainTextEditCode.textCursor().hasSelection():
+            current_line = self.ui.plainTextEditCode.textCursor().blockNumber()
+            initial_comment_text = "comment " + str(self.next_comment_no)
+            comment = Comment(initial_comment_text, [], current_line - 4, current_line + 4) #0, 0 will be changed after the selection has been added
+            file = self.data.get_file_by_path(self.get_current_file_path())
+            file.add_comment(comment)
+            self.add_comment_to_gui(comment)
 
     def selected_comment_changed(self, curr, prev):
         #called whenever another comment is selected
