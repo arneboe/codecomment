@@ -117,12 +117,12 @@ class MainWindow(QMainWindow):
                         self.add_comment_to_gui(comment)
                         for marker in comment.markers:
                             color = self.commentMetaData[comment].color_name
-                            self.load_marker(marker, color)
+                            self.load_marker(marker, color, comment.start_line, comment.end_line)
                 if(len(self.data.files) > 0):
                     self.ui.listWidgetFiles.setCurrentItem(self.ui.listWidgetFiles.item(0))
 
 
-    def load_marker(self, marker, color_name):
+    def load_marker(self, marker, color_name, start_block, end_block):
         start_cursor = self.ui.plainTextEditCode.textCursor()
         start_cursor.setPosition(0, QTextCursor.MoveAnchor); #Moves the cursor to the beginning of the document
         #Now moves the cursor to the line "line" and in the column "index"
@@ -137,7 +137,7 @@ class MainWindow(QMainWindow):
         end_cursor.movePosition(QTextCursor.NextCharacter, QTextCursor.MoveAnchor, marker.end_col);
         end_pos = end_cursor.position()
 
-        metadata = MarkerMetaData(marker, color_name, start_pos, end_pos)
+        metadata = MarkerMetaData(marker, color_name, start_pos, end_pos, start_block, end_block)
         self.markerMetaData[marker] = metadata
 
 
@@ -211,6 +211,23 @@ class MainWindow(QMainWindow):
         else:
             self.ui.actionRemove_Comment.setEnabled(False)
 
+    def redraw_all_markers(self):
+        self.clear_markers()
+        path = self.get_current_file_path()
+        f = self.data.get_file_by_path(path)
+        for comment in f.comments:
+            self.highlight_all_markers(comment)
+
+    def clear_markers(self):
+        cursor = self.ui.plainTextEditCode.textCursor()
+        cursor.setPosition(0, QTextCursor.MoveAnchor)
+        cursor.movePosition(QTextCursor.End, QTextCursor.KeepAnchor)
+        format = QTextCharFormat()
+        color = QColor()
+        color.setAlpha(0) #nice trick to get the original background color back
+        brush = QBrush(color)
+        format.setBackground(brush)
+        cursor.mergeCharFormat(format)
 
     def highlight_all_markers(self, comment):
         '''
@@ -318,6 +335,27 @@ class MainWindow(QMainWindow):
         highlights text according to the marker and the color in the current file
         use metadata.color_name if color is None
         '''
+
+        #first highlight the area
+        cursor = self.ui.plainTextEditCode.textCursor()
+        cursor.setPosition(0, QTextCursor.MoveAnchor); #Moves the cursor to the beginning of the document
+        #Now moves the cursor to the start_line
+        cursor.movePosition(QTextCursor.Down, QTextCursor.MoveAnchor, marker_meta_data.start_block)
+        #select everything till the end line
+        assert(marker_meta_data.end_block >= marker_meta_data.start_block)
+        move_dist = marker_meta_data.end_block - marker_meta_data.start_block
+        cursor.movePosition(QTextCursor.Down, QTextCursor.KeepAnchor, move_dist)
+        cursor.movePosition(QTextCursor.EndOfLine, QTextCursor.KeepAnchor)
+        format = QTextCharFormat()
+        background_color = color
+        if background_color is None:
+            background_color = QColor(marker_meta_data.color_name)
+        background_color.setAlpha(70)
+        brush = QBrush(background_color)
+        format.setBackground(brush)
+        cursor.mergeCharFormat(format)
+
+        #now highlight the marker
         cursor = self.ui.plainTextEditCode.textCursor()
         cursor.setPosition(marker_meta_data.start_pos)
         cursor.setPosition(marker_meta_data.end_pos, QTextCursor.KeepAnchor)
@@ -350,12 +388,12 @@ class MainWindow(QMainWindow):
                 cursor.movePosition(QTextCursor.EndOfBlock)
                 end = cursor.position()
 
-            #FIXME end_line should be == start_line
             end_column = cursor.columnNumber()
             marker = Marker(start_line, start_column, end_column)
             self.current_comment.add_marker(marker)
             color_name = self.get_current_comment_color_name()
-            metaData = MarkerMetaData(marker, color_name, start, end)
+            metaData = MarkerMetaData(marker, color_name, start, end, self.current_comment.start_line,
+                                      self.current_comment.end_line)
             self.markerMetaData[marker] = metaData
             self.highlight_marker(metaData)
 
@@ -436,9 +474,24 @@ class MainWindow(QMainWindow):
             self.ui.spinBoxStartLine.setValue(newValue)
         self.current_comment.start_line = newValue
 
+        #update metadata of all markers in this comment
+        #yes I know that this sucks :D
+        for marker in self.current_comment.markers:
+            metadata = self.markerMetaData[marker]
+            metadata.start_block = newValue
+
+        self.redraw_all_markers()
+
 
     def end_line_changed(self, newValue):
         if newValue < self.current_comment.start_line:
             newValue = self.current_comment.start_line
             self.ui.spinBoxEndLine.setValue(newValue)
         self.current_comment.end_line = newValue
+
+        #update metadata of all markers in this comment
+        #yes I know that this sucks :D
+        for marker in self.current_comment.markers:
+            metadata = self.markerMetaData[marker]
+            metadata.end_block = newValue
+        self.redraw_all_markers()
