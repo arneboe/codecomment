@@ -32,7 +32,20 @@ class MainWindow(QMainWindow):
         #maps from marker to marker meta data
         self.markerMetaData = {}
 
-        self.reset_code_edit()
+        #initialize the highlighter
+        font = QFont()
+        font.setFamily('Courier')
+        font.setFixedPitch(True)
+        font.setPointSize(10)
+        self.ui.plainTextEditCode.setFont(font)
+        self.highlighter = Highlighter(self.ui.plainTextEditCode.document())
+
+        #important because otherwise the mapping from block to line breaks
+        self.ui.plainTextEditCode.setWordWrapMode(QTextOption.NoWrap)
+
+        #make sure that the cursor is always in the center (improves readability when clickig on comments)
+        self.ui.plainTextEditCode.setCenterOnScroll(True)
+        self.ui.plainTextEditCode.setReadOnly(True)
 
         self.labelGroup = QLabel("Group No.")
         self.ui.toolBar.addWidget(self.labelGroup)
@@ -141,27 +154,6 @@ class MainWindow(QMainWindow):
         self.markerMetaData[marker] = metadata
 
 
-    def reset_code_edit(self):
-        #this method exists because the highlighting sometimes breaks the formatting of the
-        #plain text edit, re creating it is far easier than figuring out what is wrong :D
-        self.ui.plainTextEditCode.hide()
-        self.ui.plainTextEditCode.setParent(None)#remove from ui
-        self.ui.plainTextEditCode.deleteLater()
-        self.ui.plainTextEditCode = QPlainTextEdit()
-        self.ui.splitter.addWidget(self.ui.plainTextEditCode)
-
-        #initialize the highlighter
-        font = QFont()
-        font.setFamily('Courier')
-        font.setFixedPitch(True)
-        font.setPointSize(10)
-        self.ui.plainTextEditCode.setFont(font)
-        self.highlighter = Highlighter(self.ui.plainTextEditCode.document())
-        #important because otherwise the mapping from block to line breaks
-        self.ui.plainTextEditCode.setWordWrapMode(QTextOption.NoWrap)
-        #make sure that the cursor is always in the center (improves readability when clickig on comments)
-        self.ui.plainTextEditCode.setCenterOnScroll(True)
-        self.ui.plainTextEditCode.setReadOnly(True)
 
     def open(self):
         #is called when the user clicks open
@@ -195,7 +187,7 @@ class MainWindow(QMainWindow):
         #is called whenever an item is selecetd in the file list
         f = open(curr.text(), 'r')
 
-        self.reset_code_edit()
+        self.clear_markers()
         self.ui.plainTextEditCode.setPlainText(f.read())
         # update comment list if file changed
         f = self.data.get_file_by_path(curr.text())
@@ -398,7 +390,7 @@ class MainWindow(QMainWindow):
             self.markerMetaData[marker] = metaData
             self.highlight_marker(metaData)
 
-            #clear selection and reset color
+            #clear selection and re color
             cursor.clearSelection()
             self.ui.plainTextEditCode.setTextCursor(cursor)
 
