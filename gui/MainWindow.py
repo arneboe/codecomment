@@ -342,6 +342,14 @@ class MainWindow(QMainWindow):
             start_column = cursor.columnNumber()
             cursor.setPosition(end)
             end_line = cursor.blockNumber()
+
+            #selections may only be one line long
+            #multi line does not work well in latex
+            if(end_line != start_line):
+                cursor.setPosition(start)
+                cursor.movePosition(QTextCursor.EndOfBlock)
+                end = cursor.position()
+
             #FIXME end_line should be == start_line
             end_column = cursor.columnNumber()
             marker = Marker(start_line, start_column, end_column)
