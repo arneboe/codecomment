@@ -79,7 +79,11 @@
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QSpinBox" name="spinBoxStartLine"/>
+                 <widget class="QSpinBox" name="spinBoxStartLine">
+                  <property name="maximum">
+                   <number>999999999</number>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
@@ -96,7 +100,11 @@
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QSpinBox" name="spinBoxEndLine"/>
+                 <widget class="QSpinBox" name="spinBoxEndLine">
+                  <property name="maximum">
+                   <number>999999999</number>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
