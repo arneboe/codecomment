@@ -71,8 +71,8 @@ class Export(object):
                 newline = unicode("");
                 newline += snippet[index][0:com.markers[0].start_col];
                 newline += u"@*\colorbox{BurntOrange}{";
-                newline += self.tex_escape(snippet[index][com.markers[0].start_col:com.markers[0].end_col + 1]);
-                newline += u"}*@" + snippet[index][com.markers[0].end_col + 1 :];
+                newline += self.tex_escape(snippet[index][com.markers[0].start_col:com.markers[0].end_col]);
+                newline += u"}*@" + snippet[index][com.markers[0].end_col:];
                 snippet[index] = newline;
                 codestr = u"\n".join(snippet);
                 
