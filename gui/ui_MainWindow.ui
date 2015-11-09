@@ -48,7 +48,7 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <widget class="QWidget" name="">
+          <widget class="QWidget" name="layoutWidget">
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
              <widget class="QListWidget" name="listWidgetComments">
@@ -62,7 +62,7 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="">
+          <widget class="QWidget" name="layoutWidget">
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout">
@@ -122,11 +122,6 @@
      </widget>
     </item>
    </layout>
-   <zorder>plainTextEditComment</zorder>
-   <zorder>listWidgetComments</zorder>
-   <zorder></zorder>
-   <zorder>widget</zorder>
-   <zorder>widget_2</zorder>
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
@@ -147,6 +142,21 @@
    <addaction name="actionRemove_Comment"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar_2">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="action_textbf"/>
+   <addaction name="action_textit"/>
+   <addaction name="action_texttt"/>
+   <addaction name="action_lstinline"/>
+  </widget>
   <action name="actionExport">
    <property name="text">
     <string>Export</string>
@@ -222,6 +232,50 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="action_textbf">
+   <property name="text">
+    <string>\textbf</string>
+   </property>
+   <property name="toolTip">
+    <string>alt+f</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+F</string>
+   </property>
+  </action>
+  <action name="action_textit">
+   <property name="text">
+    <string>\textit</string>
+   </property>
+   <property name="toolTip">
+    <string>alt+i</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+I</string>
+   </property>
+  </action>
+  <action name="action_texttt">
+   <property name="text">
+    <string>\texttt</string>
+   </property>
+   <property name="toolTip">
+    <string>alt+t</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+T</string>
+   </property>
+  </action>
+  <action name="action_lstinline">
+   <property name="text">
+    <string>\lstinline</string>
+   </property>
+   <property name="toolTip">
+    <string>alt+l</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+L</string>
    </property>
   </action>
  </widget>

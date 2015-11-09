@@ -95,6 +95,12 @@ class MainWindow(QMainWindow):
         self.ui.spinBoxStartLine.valueChanged.connect(self.start_line_changed)
         self.ui.spinBoxEndLine.valueChanged.connect(self.end_line_changed)
 
+        self.ui.action_textbf.triggered.connect(self.textbf)
+        self.ui.action_textit.triggered.connect(self.textit)
+        self.ui.action_texttt.triggered.connect(self.texttt)
+        self.ui.action_lstinline.triggered.connect(self.lstinline)
+
+
         self.current_comment = None #the currently selected comment, if any
 
         self.color_names = ["coral", "cornflowerblue", "darksalmon", "darkseagreen",
@@ -499,3 +505,28 @@ class MainWindow(QMainWindow):
             metadata = self.markerMetaData[marker]
             metadata.end_block = newValue
         self.redraw_all_markers()
+
+    def surround_comment_selection(self, before, after):
+        '''
+        surrounds the selected text in the comment text editor with 'before' and 'after'
+        '''
+        cursor = self.ui.plainTextEditComment.textCursor()
+        text = cursor.selectedText()
+        text.prepend(before)
+        text.append(after)
+        cursor.insertText(text)
+        cursor.clearSelection()
+
+
+    def textbf(self):
+        #called when the user clicks "textbf"
+        self.surround_comment_selection("\\textbf{", "}")
+
+    def textit(self):
+        self.surround_comment_selection("\\textit{", "}")
+
+    def texttt(self):
+        self.surround_comment_selection("\\texttt{", "}")
+
+    def lstinline(self):
+        self.surround_comment_selection("\\lstinline|", "|")
