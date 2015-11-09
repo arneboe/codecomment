@@ -156,6 +156,7 @@
    <addaction name="action_textit"/>
    <addaction name="action_texttt"/>
    <addaction name="action_lstinline"/>
+   <addaction name="action_emph"/>
   </widget>
   <action name="actionExport">
    <property name="text">
@@ -276,6 +277,17 @@
    </property>
    <property name="shortcut">
     <string>Alt+L</string>
+   </property>
+  </action>
+  <action name="action_emph">
+   <property name="text">
+    <string>\emph</string>
+   </property>
+   <property name="toolTip">
+    <string>alt+p</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+P</string>
    </property>
   </action>
  </widget>

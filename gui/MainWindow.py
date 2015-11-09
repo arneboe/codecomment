@@ -99,6 +99,7 @@ class MainWindow(QMainWindow):
         self.ui.action_textit.triggered.connect(self.textit)
         self.ui.action_texttt.triggered.connect(self.texttt)
         self.ui.action_lstinline.triggered.connect(self.lstinline)
+        self.ui.action_emph.triggered.connect(self.emph)
 
 
         self.current_comment = None #the currently selected comment, if any
@@ -530,3 +531,6 @@ class MainWindow(QMainWindow):
 
     def lstinline(self):
         self.surround_comment_selection("\\lstinline|", "|")
+
+    def emph(self):
+        self.surround_comment_selection("\\emph{", "}")
