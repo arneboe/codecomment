@@ -157,6 +157,8 @@
    <addaction name="action_texttt"/>
    <addaction name="action_lstinline"/>
    <addaction name="action_emph"/>
+   <addaction name="action_0_25"/>
+   <addaction name="action_0_25_minus"/>
   </widget>
   <action name="actionExport">
    <property name="text">
@@ -288,6 +290,28 @@
    </property>
    <property name="shortcut">
     <string>Alt+P</string>
+   </property>
+  </action>
+  <action name="action_0_25">
+   <property name="text">
+    <string>+0.25</string>
+   </property>
+   <property name="toolTip">
+    <string>alt++</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt++</string>
+   </property>
+  </action>
+  <action name="action_0_25_minus">
+   <property name="text">
+    <string>-0.25</string>
+   </property>
+   <property name="toolTip">
+    <string>alt+-</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+-</string>
    </property>
   </action>
  </widget>
