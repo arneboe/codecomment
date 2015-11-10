@@ -11,6 +11,7 @@ from MetaData import CommentMetaData, MarkerMetaData
 from yaml import load, dump
 from os.path import dirname
 from Exporter import Export
+import codecs
 
 
 class MainWindow(QMainWindow):
@@ -194,7 +195,8 @@ class MainWindow(QMainWindow):
 
     def selected_file_changed(self, curr, prev):
         #is called whenever an item is selecetd in the file list
-        f = open(curr.text(), 'r')
+        #f = open(curr.text(), 'r')
+        f = codecs.open(curr.text(),encoding='utf-8', mode='r')
 
         self.ui.plainTextEditCode.setPlainText(f.read())
         # update comment list if file changed
