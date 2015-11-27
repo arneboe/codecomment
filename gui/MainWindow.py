@@ -37,7 +37,7 @@ class MainWindow(QMainWindow):
         font = QFont()
         font.setFamily('Courier')
         font.setFixedPitch(True)
-        font.setPointSize(12)
+        font.setPointSize(self.data.fontSize)
         self.ui.plainTextEditCode.setFont(font)
         self.highlighter = Highlighter(self.ui.plainTextEditCode.document())
 
@@ -455,11 +455,16 @@ class MainWindow(QMainWindow):
             self.data.sheet_no = doc["sheet"]
             self.data.tutor_name = doc["tutor"]
             self.save_folder = doc["folder"]
+            try:
+                self.data.fontSize = doc["fontSize"]
+            except KeyError:
+                self.data.fontSize = 10;   
 
     def save_yaml(self):
         data = {"group" : self.data.group_no,
                 "sheet" : self.data.sheet_no,
                 "tutor" : self.data.tutor_name,
+                "fontSize" : self.data.fontSize,
                 "folder" : self.save_folder}
 
         with open('settings.yaml', 'w') as f:
