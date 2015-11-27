@@ -37,7 +37,7 @@ class MainWindow(QMainWindow):
         font = QFont()
         font.setFamily('Courier')
         font.setFixedPitch(True)
-        font.setPointSize(10)
+        font.setPointSize(12)
         self.ui.plainTextEditCode.setFont(font)
         self.highlighter = Highlighter(self.ui.plainTextEditCode.document())
 
