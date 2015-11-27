@@ -110,6 +110,7 @@ class Export(object):
         conv = {
             '\\': r'\textbackslash ',
             '&': r'\&',
+            '|': r'\textbar ',
             '%': r'\%',
             '$': r'\$',
             '#': r'\#',
@@ -122,6 +123,6 @@ class Export(object):
             '>': r'\textgreater ',
             ' ': r'\ '
         }
-        for char in "\\ ^{}&%$#_~<>":
+        for char in "\\ |^{}&%$#_~<>":
             text = text.replace(char, conv.get(char,char));
         return text;
