@@ -103,6 +103,8 @@ class MainWindow(QMainWindow):
         self.ui.action_emph.triggered.connect(self.emph)
         self.ui.action_0_25.triggered.connect(self.plus025)
         self.ui.action_0_25_minus.triggered.connect(self.minus025)
+        self.ui.action0_5_0_5.triggered.connect(self.points05_05)
+        self.ui.action0_0_5.triggered.connect(self.points0_05)
 
 
         self.current_comment = None #the currently selected comment, if any
@@ -549,3 +551,9 @@ class MainWindow(QMainWindow):
 
     def plus025(self):
         self.surround_comment_selection("", "\\textbf{[+0.25]}")
+
+    def points05_05(self):
+        self.surround_comment_selection("", "\\textbf{[0.5/0.5]}")
+
+    def points0_05(self):
+        self.surround_comment_selection("", "\\textbf{[0/0.5]}")
