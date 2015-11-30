@@ -159,6 +159,8 @@
    <addaction name="action_emph"/>
    <addaction name="action_0_25"/>
    <addaction name="action_0_25_minus"/>
+   <addaction name="action0_5_0_5"/>
+   <addaction name="action0_0_5"/>
   </widget>
   <action name="actionExport">
    <property name="text">
@@ -312,6 +314,28 @@
    </property>
    <property name="shortcut">
     <string>Alt+-</string>
+   </property>
+  </action>
+  <action name="action0_5_0_5">
+   <property name="text">
+    <string>0.5/0.5</string>
+   </property>
+   <property name="toolTip">
+    <string>alt+5</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+5</string>
+   </property>
+  </action>
+  <action name="action0_0_5">
+   <property name="text">
+    <string>0/0.5</string>
+   </property>
+   <property name="toolTip">
+    <string>at+0</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+0</string>
    </property>
   </action>
  </widget>
