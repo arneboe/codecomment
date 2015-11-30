@@ -47,6 +47,7 @@ class Data:
         self.group_no = group_no
         self.sheet_no = sheet_no
         self.tutor_name = tutor_name
+        self.fontSize = 10
         if(files is None):
             self.files = []
         else:
